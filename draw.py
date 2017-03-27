@@ -13,11 +13,28 @@ def add_box( points, x, y, z, width, height, depth ):
         for h in range(-1,1,1):
             for d in range(-1,1,1):
                 add_point( points, x+w*width, y+h*height, z+d*depth )
+    #x,y,z
+    #x,-h,z
+    #w,-h,z
+    #w,h,z
+
+    #x,y,-d
+    #x,-h,-d
+    #w,-h,-d
+    #w,h,-d
+
+    #12 sides
     
 def add_sphere( points, cx, cy, cz, r, step ):
     pts = generate_sphere( points, cx, cy, cz, r, step )
-    for pt in pts:
-        add_point( points, pt[0], pt[1], pt[2])
+    length = len(pts)
+    index = 1
+    while index < length:
+        prev = pts[index-1]
+        curr = pts[index]
+        add_edge(points,prev[0],prev[1],prev[2],curr[0],curr[1],curr[2])
+        index += 1
+    
     
 def generate_sphere( points, cx, cy, cz, r, step ):
     '''
@@ -31,8 +48,8 @@ def generate_sphere( points, cx, cy, cz, r, step ):
 
     pts = []
     rot = 0
-    circ = 0
     while rot < 1:
+        circ = 0
         while circ < 1:
             x = r*cos(circ*2*pi) + cx
             y = r*sin(circ*2*pi) * cos(rot*pi) + cy
@@ -45,16 +62,21 @@ def generate_sphere( points, cx, cy, cz, r, step ):
 
 def add_torus( points, cx, cy, cz, r0, r1, step ):
     pts = generate_torus( points, cx, cy, cz, r0, r1, step )
-    for pt in pts:
-        add_point( points, pt[0], pt[1], pt[2])
-        
+    length = len(pts)
+    index = 1
+    while index < length:
+        prev = pts[index-1]
+        curr = pts[index]
+        add_edge(points,prev[0],prev[1],prev[2],curr[0],curr[1],curr[2])
+        index += 1
+            
 def generate_torus( points, cx, cy, cz, r0, r1, step ):
     pts = []
     rot = 0
-    circ = 0
     #r1 is big radius
     #r0 is small radius
     while rot < 1:
+        circ = 0
         while circ < 1:
             x = cos(rot*2*pi)*(r0*cos(rot*2*pi)+r1) + cx
             y = r0*sin(circ*2*pi) + cy
