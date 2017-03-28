@@ -27,9 +27,8 @@ def add_sphere( points, cx, cy, cz, r, step ):
     length = len(pts)
     index = 1
     while index < length:
-        prev = pts[index-1]
         curr = pts[index]
-        add_edge(points,prev[0],prev[1],prev[2],curr[0],curr[1],curr[2])
+        add_edge(points,curr[0],curr[1],curr[2],curr[0]+1,curr[1]+1,curr[2]+1)
         index += 1
     
     
@@ -51,38 +50,18 @@ def generate_sphere( points, cx, cy, cz, r, step ):
 def add_torus( points, cx, cy, cz, r0, r1, step ):
     pts = generate_torus( points, cx, cy, cz, r0, r1, step )
     length = len(pts)
-    index = 1
+    index = 0
     while index < length:
-        prev = pts[index-1]
         curr = pts[index]
-        add_edge(points,prev[0],prev[1],prev[2],curr[0],curr[1],curr[2])
+        add_edge(points,curr[0],curr[1],curr[2],curr[0]+1,curr[1]+1,curr[2]+1)
         index += 1
-            
+        
 def generate_torus( points, cx, cy, cz, r0, r1, step ):
     pts = []
     rot = 0
     #r1 is big radius
     #r0 is small radius
     while rot <= 1+step:
-
-        top_x0 = cos(rot*2*pi)*(r0*cos(rot*2*pi)+r1) + cx 
-        top_y0 = r0*sin(pi/2) + cy
-        top_z0 = -sin(rot*2*pi)*(r0*cos(pi/2)+r1) + cz            
-        bot_x0 = cos(rot*2*pi)*(r0*cos(rot*2*pi)+r1) + cx 
-        bot_y0 = r0*sin(1.5*pi) + cy
-        bot_z0 = -sin(rot*2*pi)*(r0*cos(1.5*pi)+r1) + cz
-        
-        nex = rot+step
-        top_x1 = cos(nex*2*pi)*(r0*cos(rot*2*pi)+r1) + cx 
-        top_y1 = r0*sin(pi/2) + cy
-        top_z1 = -sin(nex*2*pi)*(r0*cos(pi/2)+r1) + cz            
-        bot_x1 = cos(nex*2*pi)*(r0*cos(nex*2*pi)+r1) + cx 
-        bot_y1 = r0*sin(1.5*pi) + cy
-        bot_z1 = -sin(nex*2*pi)*(r0*cos(1.5*pi)+r1) + cz            
-
-        add_edge( points, top_x0, top_y0, top_z0, top_x1, top_y1, top_z1 )
-        add_edge( points, bot_x0, bot_y0, bot_z0, bot_x1, bot_y1, bot_z1 )
-        
         circ = 0
         while circ <= 1 + step:
             x = cos(rot*2*pi)*(r0*cos(rot*2*pi)+r1) + cx 
