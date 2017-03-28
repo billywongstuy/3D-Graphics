@@ -7,23 +7,20 @@ sin = math.sin
 pi = math.pi
 
 def add_box( points, x, y, z, width, height, depth ):
-    print x,y,z
-    for w in range(0,2,1):
-        print w
-        for h in range(-1,1,1):
-            for d in range(-1,1,1):
-                add_point( points, x+w*width, y+h*height, z+d*depth )
-    #x,y,z
-    #x,-h,z
-    #w,-h,z
-    #w,h,z
+    add_edge(points,x,y,z,x+width,y,z)
+    add_edge(points,x,y,z,x,y-height,z)
+    add_edge(points,x+width,y-height,z,x+width,y,z)
+    add_edge(points,x+width,y-height,z,x,y-height,z)
+    
+    add_edge(points,x,y,z-depth,x+width,y,z-depth)
+    add_edge(points,x,y,z-depth,x,y-height,z-depth)
+    add_edge(points,x+width,y-height,z-depth,x+width,y,z-depth)
+    add_edge(points,x+width,y-height,z-depth,x,y-height,z-depth)
 
-    #x,y,-d
-    #x,-h,-d
-    #w,-h,-d
-    #w,h,-d
-
-    #12 sides
+    add_edge(points,x,y,z,x,y,z-depth)
+    add_edge(points,x+width,y,z,x+width,y,z-depth)
+    add_edge(points,x,y-height,z,x,y-height,z-depth)
+    add_edge(points,x+width,y-height,z,x+width,y-height,z-depth)
     
 def add_sphere( points, cx, cy, cz, r, step ):
     pts = generate_sphere( points, cx, cy, cz, r, step )
@@ -37,20 +34,11 @@ def add_sphere( points, cx, cy, cz, r, step ):
     
     
 def generate_sphere( points, cx, cy, cz, r, step ):
-    '''
-    points
-    for rot 0 to 1:
-        for circ to 1:
-            x = rcos(circ*pi) + cx
-            y = rsin(circ*pi) * cos(rot*2pi) + cy
-            z = rsin*circ*pi) * sin(rot*2pi) + cz
-    '''
-
     pts = []
     rot = 0
-    while rot < 1:
+    while rot <= 1+step:
         circ = 0
-        while circ < 1:
+        while circ <= 1+step:
             x = r*cos(circ*2*pi) + cx
             y = r*sin(circ*2*pi) * cos(rot*pi) + cy
             z = r*sin(circ*2*pi) * sin(rot*pi) + cz
@@ -75,12 +63,31 @@ def generate_torus( points, cx, cy, cz, r0, r1, step ):
     rot = 0
     #r1 is big radius
     #r0 is small radius
-    while rot < 1:
+    while rot <= 1+step:
+
+        top_x0 = cos(rot*2*pi)*(r0*cos(rot*2*pi)+r1) + cx 
+        top_y0 = r0*sin(pi/2) + cy
+        top_z0 = -sin(rot*2*pi)*(r0*cos(pi/2)+r1) + cz            
+        bot_x0 = cos(rot*2*pi)*(r0*cos(rot*2*pi)+r1) + cx 
+        bot_y0 = r0*sin(1.5*pi) + cy
+        bot_z0 = -sin(rot*2*pi)*(r0*cos(1.5*pi)+r1) + cz
+        
+        nex = rot+step
+        top_x1 = cos(nex*2*pi)*(r0*cos(rot*2*pi)+r1) + cx 
+        top_y1 = r0*sin(pi/2) + cy
+        top_z1 = -sin(nex*2*pi)*(r0*cos(pi/2)+r1) + cz            
+        bot_x1 = cos(nex*2*pi)*(r0*cos(nex*2*pi)+r1) + cx 
+        bot_y1 = r0*sin(1.5*pi) + cy
+        bot_z1 = -sin(nex*2*pi)*(r0*cos(1.5*pi)+r1) + cz            
+
+        add_edge( points, top_x0, top_y0, top_z0, top_x1, top_y1, top_z1 )
+        add_edge( points, bot_x0, bot_y0, bot_z0, bot_x1, bot_y1, bot_z1 )
+        
         circ = 0
-        while circ < 1:
-            x = cos(rot*2*pi)*(r0*cos(rot*2*pi)+r1) + cx
-            y = r0*sin(circ*2*pi) + cy
-            z = -sin(rot*2*pi)*(r0*cos(circ*2*pi)+r1) + cz
+        while circ <= 1 + step:
+            x = cos(rot*2*pi)*(r0*cos(rot*2*pi)+r1) + cx 
+            y = r0*sin(circ*(2*pi)) + cy
+            z = -sin(rot*2*pi)*(r0*cos(circ*(2*pi))+r1) + cz            
             pts.append([x,y,z,1.0])
             circ += step
         rot += step
