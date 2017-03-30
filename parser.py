@@ -44,14 +44,14 @@ The file follows the following format:
 
 See the file script for an example of the file format
 """
-ARG_COMMANDS = [ 'line', 'scale', 'move', 'rotate', 'save', 'circle', 'bezier', 'hermite', 'sphere', 'torus', 'box' ]
+ARG_COMMANDS = [ 'line', 'scale', 'move', 'rotate', 'save', 'circle', 'bezier', 'hermite', 'sphere', 'torus', 'box', 'color' ]
 
 def parse_file( fname, edges, transform, screen, color ):
 
     f = open(fname)
     lines = f.readlines()
 
-    step = 0.01
+    step = 0.005
     c = 0
     while c < len(lines):
         line = lines[c].strip()
@@ -137,5 +137,11 @@ def parse_file( fname, edges, transform, screen, color ):
 
         elif line == 'clear':
             edges[:] = []
+
+        elif line == 'color':
+            #print color, args
+            color[0] = args[0]
+            color[1] = args[1]
+            color[2] = args[2]
             
         c+= 1
